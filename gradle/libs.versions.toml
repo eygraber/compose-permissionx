@@ -55,7 +55,7 @@ detektEygraber-style = { module = "com.eygraber.detekt.rules:style", version.ref
 
 
 junit = "junit:junit:4.13.2"
-truth = "com.google.truth:truth:1.1.3"
+truth = "com.google.truth:truth:1.4.4"
 
 # not actually used; just here so renovate picks it up
 ktlint = { module = "com.pinterest.ktlint:ktlint-bom", version.ref = "ktlint" }
