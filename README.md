@@ -20,12 +20,12 @@ However, there are a couple of issues that Accompanist won't (or can't solve):
 
 1. `rememberPermissionState` breaks Compose Preview
 
-[An issue](https://github.com/google/accompanist/issues/1498) exists, but was closed,
+    - [An issue](https://github.com/google/accompanist/issues/1498) exists, but was closed,
 [delegating the responsibility](https://issuetracker.google.com/issues/267227895) for the fix to the
 `findActivity` API. While that might be the correct place to fix this issue, devs have had to deal with this for years,
 with no movement towards a fix.
 
-Compose PermissionX solves this by simply making sure `findActivity` isn't called while in a preview.
+    - Compose PermissionX solves this by simply making sure `findActivity` isn't called while in a preview.
 
 2. The default state of the permission before a request is made
 3. Detecting whether a permission was permanently denied
