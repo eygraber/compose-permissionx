@@ -1,0 +1,17 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <uses-permission android:name="android.permission.CAMERA" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+  <application>
+    <activity
+      android:theme="@android:style/Theme.Material.NoActionBar"
+      android:name="com.eygraber.compose.permissionx.test.PermissionsTestActivity"
+      android:exported="true" />
+    <activity
+      android:theme="@android:style/Theme.Material.NoActionBar"
+      android:name="com.eygraber.compose.permissionx.test.EmptyPermissionsTestActivity"
+      android:exported="true" />
+  </application>
+
+</manifest>
