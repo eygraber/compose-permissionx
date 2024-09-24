@@ -177,7 +177,7 @@ repositories {
   mavenCentral()
 }
 
-implementation("com.eygraber.permissionx:compose-permissionx:0.0.2")
+implementation("com.eygraber.permissionx:compose-permissionx:0.0.6")
 ```
 
 #### Snapshots
@@ -190,6 +190,6 @@ repositories {
 }
 
 dependencies {
-  implementation("com.eygraber.permissionx:compose-permissionx:0.0.3-SNAPSHOT")
+  implementation("com.eygraber.permissionx:compose-permissionx:0.0.7-SNAPSHOT-SNAPSHOT")
 }
 ```
