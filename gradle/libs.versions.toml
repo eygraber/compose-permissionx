@@ -7,7 +7,7 @@ android-sdk-compile = "35"
 android-sdk-min = "21"
 android-sdk-target = "35"
 
-compose = "1.7.3"
+compose = "1.7.4"
 
 conventions = "0.0.78"
 
