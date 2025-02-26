@@ -28,7 +28,7 @@ conventions = { id = "com.eygraber.conventions", version.ref = "conventions" }
 [libraries]
 accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.37.2"
 
-androidx-activity-compose = "androidx.activity:activity-compose:1.10.0"
+androidx-activity-compose = "androidx.activity:activity-compose:1.10.1"
 
 androidx-test-runner = "androidx.test:runner:1.6.2"
 androidx-test-rules = "androidx.test:rules:1.6.1"
