@@ -180,16 +180,4 @@ repositories {
 implementation("com.eygraber.permissionx:compose-permissionx:0.0.6")
 ```
 
-#### Snapshots
-
-Snapshots of the current development version of this library are available, which track the latest commit.
-
-```kotlin
-repositories {
-  maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
-}
-
-dependencies {
-  implementation("com.eygraber.permissionx:compose-permissionx:0.0.7-SNAPSHOT-SNAPSHOT")
-}
-```
+Snapshots can be found [here](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-via-gradle).
