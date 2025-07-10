@@ -12,7 +12,7 @@ compose = "1.8.3"
 conventions = "0.0.86"
 
 detekt = "1.23.8"
-detektEygraber = "1.0.11"
+detektEygraber = "1.0.12"
 
 dokka = "2.0.0"
 
