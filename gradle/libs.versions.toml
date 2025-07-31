@@ -31,7 +31,7 @@ accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.37.3
 androidx-activity-compose = "androidx.activity:activity-compose:1.10.1"
 
 androidx-test-runner = "androidx.test:runner:1.7.0"
-androidx-test-rules = "androidx.test:rules:1.6.1"
+androidx-test-rules = "androidx.test:rules:1.7.0"
 androidx-test-orchestrator = "androidx.test:orchestrator:1.5.1"
 androidx-test-uiAutomator = "androidx.test.uiautomator:uiautomator:2.3.0"
 
