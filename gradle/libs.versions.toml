@@ -9,7 +9,7 @@ android-sdk-target = "35"
 
 compose = "1.8.3"
 
-conventions = "0.0.86"
+conventions = "0.0.87"
 
 detekt = "1.23.8"
 detektEygraber = "1.0.12"
