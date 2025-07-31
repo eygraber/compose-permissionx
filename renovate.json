@@ -20,8 +20,20 @@
       ]
     },
     {
+      "groupName": "androidx-tests",
       "matchDatasources": ["maven"],
       "depType": "dependencies",
+      "matchPackagePrefixes": ["androidx.test"],
+      "automerge": true,
+      "registryUrls": [
+        "https://dl.google.com/dl/android/maven2/",
+        "https://plugins.gradle.org/m2"
+      ]
+    },
+    {
+      "matchDatasources": ["maven"],
+      "depType": "dependencies",
+      "automerge": true,
       "registryUrls": [
         "https://repo.maven.apache.org/maven2/",
         "https://dl.google.com/dl/android/maven2/",
