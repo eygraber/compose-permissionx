@@ -16,6 +16,16 @@ android {
     // "pm clear" command after each test invocation. This command ensures
     // that the app's state is completely cleared between tests.
     testInstrumentationRunnerArguments["clearPackageData"] = "true"
+
+    testInstrumentationRunnerArguments["numShards"] = "2"
+
+    System.getenv("ANDROID_TEST_INSTRUMENTATION_NUM_SHARDS")?.let { numShards ->
+      testInstrumentationRunnerArguments["numShards"] = numShards
+    }
+
+    System.getenv("ANDROID_TEST_INSTRUMENTATION_SHARD_INDEX")?.let { shardIndex ->
+      testInstrumentationRunnerArguments["shardIndex"] = shardIndex
+    }
   }
 
   lint {
@@ -23,7 +33,6 @@ android {
     checkReleaseBuilds = false
   }
 
-  @Suppress("UnstableApiUsage")
   testOptions {
     unitTests {
       isIncludeAndroidResources = true
