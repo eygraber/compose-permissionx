@@ -83,8 +83,8 @@ jobs:
       # Allow tests to continue on other devices if they fail on one device.
       fail-fast: false
       matrix:
-        api-level: [ 23, 26, 30, 35 ]
-        shard: [ 0, 1 ] # Need to update shard-count below if this changes
+        api-level: [ 23, 26, 30, 36 ]
+        shard: [ 0, 1 ] # Need to update ANDROID_TEST_INSTRUMENTATION_NUM_SHARDS below if this changes
 
     env:
       TERM: dumb

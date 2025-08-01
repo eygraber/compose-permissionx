@@ -3,9 +3,9 @@ android-cacheFix-plugin = "3.0.1"
 
 android-plugin = "8.12.0"
 
-android-sdk-compile = "35"
-android-sdk-min = "21"
-android-sdk-target = "35"
+android-sdk-compile = "36"
+android-sdk-min = "23"
+android-sdk-target = "36"
 
 compose = "1.8.3"
 

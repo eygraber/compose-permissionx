@@ -46,6 +46,7 @@ internal fun grantPermissionInDialog(
   val sdkVersion = Build.VERSION.SDK_INT
   val button = uiDevice.findPermissionButton(
     when(sdkVersion) {
+      23 -> "Allow"
       in 24..28 -> "ALLOW"
       29 -> "Allow"
       else -> "While using the app"
@@ -59,6 +60,7 @@ internal fun denyPermissionInDialog(
   instrumentation: Instrumentation = InstrumentationRegistry.getInstrumentation()
 ) {
   val text = when(Build.VERSION.SDK_INT) {
+    23 -> "Deny"
     in 24..28 -> "DENY"
     in 29..30 -> "Deny"
     else -> "t allow" // Different sdks and devices seem to have either ' or ’
