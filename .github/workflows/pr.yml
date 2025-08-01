@@ -83,7 +83,7 @@ jobs:
       # Allow tests to continue on other devices if they fail on one device.
       fail-fast: false
       matrix:
-        api-level: [ 22, 26, 30, 35 ]
+        api-level: [ 23, 26, 30, 35 ]
         shard: [ 0, 1 ] # Need to update shard-count below if this changes
 
     env:
@@ -137,12 +137,15 @@ jobs:
 
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          ANDROID_TEST_INSTRUMENTATION_NUM_SHARDS: 2
+          ANDROID_TEST_INSTRUMENTATION_SHARD_INDEX: ${{ matrix.shard }}
         with:
           api-level: ${{ matrix.api-level }}
           arch: ${{ steps.determine-arch.outputs.ARCH }}
           target: ${{ steps.determine-target.outputs.TARGET }}
           profile: Galaxy Nexus
-          script: ./gradlew connectedCheck -Pandroid.testInstrumentationRunnerArguments.numShards=2 -Pandroid.testInstrumentationRunnerArguments.shardIndex=${{ matrix.shard }} --scan --continue --no-configuration-cache --stacktrace
+          script: ./gradlew connectedCheck --scan --continue --stacktrace
 
       - name: Upload logs
         if: always()
