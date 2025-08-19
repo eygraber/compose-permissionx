@@ -121,6 +121,19 @@ jobs:
           fi
           echo "TARGET=$TARGET" >> $GITHUB_OUTPUT
 
+      # Determine what emulator profile to use. We run all API 25+ emulators using
+      # the pixel profile, but API 23+24 isn't supported so we use the obsolete Galaxy Nexus profile
+      - name: Determine emulator profile
+        id: determine-profile
+        env:
+          API_LEVEL: ${{ matrix.api-level }}
+        run: |
+          PROFILE="Galaxy Nexus"
+          if [ "$API_LEVEL" -ge "25" ]; then
+            PROFILE="pixel"
+          fi
+          echo "PROFILE=$PROFILE" >> $GITHUB_OUTPUT
+
       - name: Determine emulator arch
         id: determine-arch
         env:
@@ -144,7 +157,7 @@ jobs:
           api-level: ${{ matrix.api-level }}
           arch: ${{ steps.determine-arch.outputs.ARCH }}
           target: ${{ steps.determine-target.outputs.TARGET }}
-          profile: Galaxy Nexus
+          profile: ${{ steps.determine-profile.outputs.PROFILE }}
           script: ./gradlew connectedCheck --scan --continue --stacktrace
 
       - name: Upload logs
