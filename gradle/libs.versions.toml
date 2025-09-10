@@ -7,7 +7,7 @@ android-sdk-compile = "36"
 android-sdk-min = "23"
 android-sdk-target = "36"
 
-compose = "1.9.0"
+compose = "1.9.1"
 
 conventions = "0.0.87"
 
