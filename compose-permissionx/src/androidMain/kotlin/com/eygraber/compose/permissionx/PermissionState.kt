@@ -58,6 +58,9 @@ public interface PermissionState {
 public fun PermissionState.launchPermissionRequestOrAppSettings() {
   when(status) {
     PermissionStatus.NotGranted.PermanentlyDenied -> openAppSettings()
-    else -> launchPermissionRequest()
+    PermissionStatus.Granted,
+    PermissionStatus.NotGranted.Denied,
+    PermissionStatus.NotGranted.NotRequested
+    -> launchPermissionRequest()
   }
 }
