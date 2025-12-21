@@ -1,53 +1,11 @@
+import com.android.build.api.dsl.androidLibrary
+
 plugins {
   id("com.eygraber.conventions-kotlin-multiplatform")
-  id("com.eygraber.conventions-android-library")
+  id("com.eygraber.conventions-android-kmp-library")
   id("com.eygraber.conventions-compose")
   id("com.eygraber.conventions-detekt2")
   id("com.eygraber.conventions-publish-maven-central")
-}
-
-android {
-  namespace = "com.eygraber.compose.permissionx"
-
-  defaultConfig {
-    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-    // The following argument makes the Android Test Orchestrator run its
-    // "pm clear" command after each test invocation. This command ensures
-    // that the app's state is completely cleared between tests.
-    testInstrumentationRunnerArguments["clearPackageData"] = "true"
-
-    testInstrumentationRunnerArguments["numShards"] = "2"
-
-    System.getenv("ANDROID_TEST_INSTRUMENTATION_NUM_SHARDS")?.let { numShards ->
-      testInstrumentationRunnerArguments["numShards"] = numShards
-    }
-
-    System.getenv("ANDROID_TEST_INSTRUMENTATION_SHARD_INDEX")?.let { shardIndex ->
-      testInstrumentationRunnerArguments["shardIndex"] = shardIndex
-    }
-  }
-
-  lint {
-    // skip vital checks for assemble tasks since CI runs lintRelease
-    checkReleaseBuilds = false
-  }
-
-  testOptions {
-    unitTests {
-      isIncludeAndroidResources = true
-    }
-    animationsDisabled = true
-    execution = "ANDROIDX_TEST_ORCHESTRATOR"
-    targetSdk = libs.versions.android.sdk.target.get().toInt()
-  }
-
-  // packaging {
-  //   // Exclude license files to enable the test APK to build (has no effect on the AARs)
-  //   resources {
-  //     excludes += listOf("/META-INF/AL2.0", "/META-INF/LGPL2.1")
-  //   }
-  // }
 }
 
 kotlin {
@@ -58,7 +16,45 @@ kotlin {
       isNodeEnabled = true,
       isBrowserEnabled = true,
     ),
+    androidNamespace = "com.eygraber.compose.permissionx",
   )
+
+  androidLibrary {
+    lint {
+      // skip vital checks for assemble tasks since CI runs lintRelease
+      checkReleaseBuilds = false
+    }
+
+    withHostTest {
+      isIncludeAndroidResources = true
+    }
+
+    withDeviceTest {
+      animationsDisabled = true
+      execution = "ANDROIDX_TEST_ORCHESTRATOR"
+      instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+      // The following argument makes the Android Test Orchestrator run its
+      // "pm clear" command after each test invocation. This command ensures
+      // that the app's state is completely cleared between tests.
+      instrumentationRunnerArguments["clearPackageData"] = "true"
+
+      instrumentationRunnerArguments["numShards"] = "2"
+
+      System.getenv("ANDROID_TEST_INSTRUMENTATION_NUM_SHARDS")?.let { numShards ->
+        instrumentationRunnerArguments["numShards"] = numShards
+      }
+
+      System.getenv("ANDROID_TEST_INSTRUMENTATION_SHARD_INDEX")?.let { shardIndex ->
+        instrumentationRunnerArguments["shardIndex"] = shardIndex
+      }
+
+      targetSdk {
+        release(
+          libs.versions.android.sdk.target.get().toInt()
+        )
+      }
+    }
+  }
 
   sourceSets {
     androidMain.dependencies {
