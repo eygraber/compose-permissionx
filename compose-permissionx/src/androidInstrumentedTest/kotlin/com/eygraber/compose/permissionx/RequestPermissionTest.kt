@@ -87,32 +87,28 @@ class RequestPermissionTest {
   private fun ComposableUnderTest() {
     val state = rememberPermissionState(android.Manifest.permission.CAMERA)
     when(val status = state.status) {
-      PermissionStatus.Granted -> {
-        Text("Granted")
-      }
+      PermissionStatus.Granted -> Text("Granted")
 
-      is PermissionStatus.NotGranted -> {
-        Column {
-          when(status) {
-            PermissionStatus.NotGranted.Denied -> {
-              Text("Denied")
-              Button(onClick = { state.launchPermissionRequest() }) {
-                Text("Request")
-              }
+      is PermissionStatus.NotGranted -> Column {
+        when(status) {
+          PermissionStatus.NotGranted.Denied -> {
+            Text("Denied")
+            Button(onClick = { state.launchPermissionRequest() }) {
+              Text("Request")
             }
+          }
 
-            PermissionStatus.NotGranted.NotRequested -> {
-              Text("No permission")
-              Button(onClick = { state.launchPermissionRequest() }) {
-                Text("Request")
-              }
+          PermissionStatus.NotGranted.NotRequested -> {
+            Text("No permission")
+            Button(onClick = { state.launchPermissionRequest() }) {
+              Text("Request")
             }
+          }
 
-            PermissionStatus.NotGranted.PermanentlyDenied -> {
-              Text("PermanentlyDenied")
-              Button(onClick = { state.openAppSettings() }) {
-                Text("Open App Settings")
-              }
+          PermissionStatus.NotGranted.PermanentlyDenied -> {
+            Text("PermanentlyDenied")
+            Button(onClick = { state.openAppSettings() }) {
+              Text("Open App Settings")
             }
           }
         }

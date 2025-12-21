@@ -31,7 +31,8 @@ internal fun grantPermissionProgrammatically(
     )
     fileDescriptor.checkError()
     fileDescriptor.close()
-  } else {
+  }
+  else {
     instrumentation.uiAutomation.grantRuntimePermission(
       instrumentation.targetContext.packageName,
       permission
@@ -74,15 +75,12 @@ internal fun doNotAskAgainPermissionInDialog(
 ) {
   val uiDevice = UiDevice.getInstance(instrumentation)
   when {
-    Build.VERSION.SDK_INT >= 30 -> {
-      denyPermissionInDialog(instrumentation)
-    }
+    Build.VERSION.SDK_INT >= 30 -> denyPermissionInDialog(instrumentation)
 
-    Build.VERSION.SDK_INT > 28 -> {
+    Build.VERSION.SDK_INT > 28 ->
       uiDevice
         .findPermissionButton("Deny & don’t ask again")
         .clickForPermission(instrumentation)
-    }
 
     Build.VERSION.SDK_INT == 23 -> {
       uiDevice.findPermissionButton("Never ask again")

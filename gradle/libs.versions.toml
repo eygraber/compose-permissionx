@@ -11,8 +11,8 @@ compose = "1.10.0"
 
 conventions = "0.0.94"
 
-detekt = "1.23.8"
-detektEygraber = "1.0.12"
+detekt = "2.0.0-alpha.1"
+detektEygraber = "1.0.14"
 
 dokka = "2.1.0"
 
@@ -38,7 +38,7 @@ androidx-test-uiAutomator = "androidx.test.uiautomator:uiautomator:2.3.0"
 buildscript-android = { module = "com.android.tools.build:gradle", version.ref = "android-plugin" }
 buildscript-androidCacheFix = { module = "gradle.plugin.org.gradle.android:android-cache-fix-gradle-plugin", version.ref = "android-cacheFix-plugin" }
 buildscript-compose-compiler = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
-buildscript-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+buildscript-detekt = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 buildscript-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 buildscript-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 buildscript-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "publish" }
@@ -52,7 +52,6 @@ compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", ve
 
 detektEygraber-formatting = { module = "com.eygraber.detekt.rules:formatting", version.ref = "detektEygraber" }
 detektEygraber-style = { module = "com.eygraber.detekt.rules:style", version.ref = "detektEygraber" }
-
 
 junit = "junit:junit:4.13.2"
 truth = "com.google.truth:truth:1.4.5"
