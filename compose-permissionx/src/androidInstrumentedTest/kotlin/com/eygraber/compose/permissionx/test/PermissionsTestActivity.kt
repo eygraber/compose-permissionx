@@ -32,9 +32,7 @@ class PermissionsTestActivity : ComponentActivity() {
 
         val state = rememberPermissionState(Manifest.permission.CAMERA)
         when(state.status) {
-          PermissionStatus.Granted -> {
-            Text("Granted")
-          }
+          PermissionStatus.Granted -> Text("Granted")
 
           PermissionStatus.NotGranted.Denied -> {
             Text("Denied")
