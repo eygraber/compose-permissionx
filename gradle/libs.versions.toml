@@ -11,14 +11,15 @@ compose = "1.10.1"
 
 conventions = "0.0.98"
 
-detekt = "2.0.0-alpha.1"
-detektEygraber = "1.0.14"
+detekt = "2.0.0-alpha.2"
 
 dokka = "2.1.0"
 
 kotlin = "2.3.0"
 
 ktlint = "1.8.0"
+
+ktlintCustomRules = "0.1.1"
 
 publish = "0.36.0"
 
@@ -50,11 +51,13 @@ compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose" }
 
-detektEygraber-formatting = { module = "com.eygraber.detekt.rules:formatting", version.ref = "detektEygraber" }
-detektEygraber-style = { module = "com.eygraber.detekt.rules:style", version.ref = "detektEygraber" }
-
 junit = "junit:junit:4.13.2"
 truth = "com.google.truth:truth:1.4.5"
 
 # not actually used; just here so renovate picks it up
+# noinspection UnusedVersionCatalogEntry
 ktlint = { module = "com.pinterest.ktlint:ktlint-bom", version.ref = "ktlint" }
+
+# just here so renovate picks it up
+# noinspection UnusedVersionCatalogEntry
+ktlintCustomRules = { module = "com.eygraber.ktlint.rules:ktlint-rules", version.ref = "ktlintCustomRules" }
