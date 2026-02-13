@@ -14,6 +14,10 @@ import androidx.compose.ui.util.fastAll
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastMap
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import kotlin.time.ComparableTimeMark
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 import com.google.accompanist.permissions.MultiplePermissionsState as AccompanistMultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState as accompanistRememberMultiplePermissionsState
 
@@ -24,6 +28,10 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState as ac
  * @param otherPermissions additional permissions to control and observe.
  * @param onPermissionsResult will be called with whether the user granted the permissions
  *  after [MultiplePermissionsState.launchMultiplePermissionRequest] is called.
+ * @param cancellationThreshold if a permission request is made, and a denied result is received without a
+ *  rationale within this duration after the first request, it is likely a cancellation and the status
+ *  will remain [PermissionStatus.NotGranted.Denied]. After the first request, if the result comes back
+ *  faster than this threshold, the status will be [PermissionStatus.NotGranted.PermanentlyDenied].
  * @param previewPermissionStatuses provides a [PermissionStatus] for a given permission when running
  *  in a preview.
  */
@@ -33,10 +41,12 @@ public fun rememberMultiplePermissionsState(
   permission: String,
   vararg otherPermissions: String,
   onPermissionsResult: (Map<String, Boolean>) -> Unit = {},
+  cancellationThreshold: Duration = 135.milliseconds,
   previewPermissionStatuses: Map<String, PermissionStatus> = emptyMap(),
 ): MultiplePermissionsState = rememberMultiplePermissionsState(
   permissions = listOf(permission) + otherPermissions.toList(),
   onPermissionsResult = onPermissionsResult,
+  cancellationThreshold = cancellationThreshold,
   previewPermissionStatuses = previewPermissionStatuses,
 )
 
@@ -46,6 +56,10 @@ public fun rememberMultiplePermissionsState(
  * @param permissions the permissions to control and observe.
  * @param onPermissionsResult will be called with whether the user granted the permissions
  *  after [MultiplePermissionsState.launchMultiplePermissionRequest] is called.
+ * @param cancellationThreshold if a permission request is made, and a denied result is received without a
+ *  rationale within this duration after the first request, it is likely a cancellation and the status
+ *  will remain [PermissionStatus.NotGranted.Denied]. After the first request, if the result comes back
+ *  faster than this threshold, the status will be [PermissionStatus.NotGranted.PermanentlyDenied].
  * @param previewPermissionStatuses provides a [PermissionStatus] for a given permission when running
  *  in a preview.
  */
@@ -54,6 +68,7 @@ public fun rememberMultiplePermissionsState(
 public fun rememberMultiplePermissionsState(
   permissions: List<String>,
   onPermissionsResult: (Map<String, Boolean>) -> Unit = {},
+  cancellationThreshold: Duration = 135.milliseconds,
   previewPermissionStatuses: Map<String, PermissionStatus> = emptyMap(),
 ): MultiplePermissionsState = when {
   LocalInspectionMode.current -> PreviewMultiplePermissionsState(
@@ -74,13 +89,15 @@ public fun rememberMultiplePermissionsState(
           permissionState.refreshPermissionStatus()
           onPermissionsResult(permissionsResult)
         }
-        catch(_: UninitializedPropertyAccessException) {}
+        catch(_: UninitializedPropertyAccessException) {
+        }
       }
 
     permissionState = remember(accompanistPermissionState) {
       AccompanistMultiplePermissionsStateWrapper(
         accompanist = accompanistPermissionState,
         context = context,
+        cancellationThreshold = cancellationThreshold,
       )
     }
 
@@ -114,13 +131,11 @@ private class PreviewMultiplePermissionsState(
 private class AccompanistMultiplePermissionsStateWrapper(
   private val accompanist: AccompanistMultiplePermissionsState,
   private val context: Context,
+  private val cancellationThreshold: Duration,
 ) : MultiplePermissionsState {
-  override var permissions = accompanist.permissions.fastMap { state ->
-    AccompanistPermissionStateWrapper(
-      accompanist = state,
-      context = context,
-    )
-  }
+  override var permissions: List<AccompanistPermissionStateWrapper> by mutableStateOf(
+    wrapPermissions()
+  )
 
   override var isNotRequested: Boolean by mutableStateOf(true)
 
@@ -128,7 +143,10 @@ private class AccompanistMultiplePermissionsStateWrapper(
   override val isAllNotGrantedPermissionsPermanentlyDenied: Boolean
     get() = permissions.fastAll { it.status.isGranted || it.status.isPermanentlyDenied }
 
+  private var requestedPermissionMark: ComparableTimeMark? = null
+
   override fun launchMultiplePermissionRequest() {
+    requestedPermissionMark = TimeSource.Monotonic.markNow()
     accompanist.launchMultiplePermissionRequest()
   }
 
@@ -137,10 +155,20 @@ private class AccompanistMultiplePermissionsStateWrapper(
     context.openAppSettings(permission?.permission)
   }
 
-  internal fun refreshPermissionStatus() {
+  fun refreshPermissionStatus() {
     permissions.fastForEach { permission ->
       permission.isPermissionPostRequest = true
+      permission.requestedPermissionMark = requestedPermissionMark
       permission.refreshPermissionStatus()
     }
   }
+
+  private fun wrapPermissions(): List<AccompanistPermissionStateWrapper> =
+    accompanist.permissions.fastMap { state ->
+      AccompanistPermissionStateWrapper(
+        accompanist = state,
+        context = context,
+        cancellationThreshold = cancellationThreshold,
+      )
+    }
 }

@@ -12,6 +12,10 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.shouldShowRationale
+import kotlin.time.ComparableTimeMark
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 import com.google.accompanist.permissions.PermissionState as AccompanistPermissionState
 import com.google.accompanist.permissions.PermissionStatus as AccompanistPermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState as accompanistRememberPermissionState
@@ -22,6 +26,10 @@ import com.google.accompanist.permissions.rememberPermissionState as accompanist
  * @param permission the permission to control and observe.
  * @param onPermissionResult will be called with whether the user granted the permission
  *  after [PermissionState.launchPermissionRequest] is called.
+ * @param cancellationThreshold if a permission request is made, and a denied result is received without a
+ *  rationale within this duration after the first request, it is likely a cancellation and the status
+ *  will remain [PermissionStatus.NotGranted.Denied]. After the first request, if the result comes back
+ *  faster than this threshold, the status will be [PermissionStatus.NotGranted.PermanentlyDenied].
  * @param previewPermissionStatus provides a [PermissionStatus] when running in a preview.
  */
 @ExperimentalPermissionsApi
@@ -29,6 +37,7 @@ import com.google.accompanist.permissions.rememberPermissionState as accompanist
 public fun rememberPermissionState(
   permission: String,
   onPermissionResult: (Boolean) -> Unit = {},
+  cancellationThreshold: Duration = 135.milliseconds,
   previewPermissionStatus: PermissionStatus = PermissionStatus.Granted,
 ): PermissionState = when {
   LocalInspectionMode.current -> PreviewPermissionState(
@@ -49,13 +58,15 @@ public fun rememberPermissionState(
           permissionState.refreshPermissionStatus()
           onPermissionResult(isGranted)
         }
-        catch(_: UninitializedPropertyAccessException) {}
+        catch(_: UninitializedPropertyAccessException) {
+        }
       }
 
     permissionState = remember(accompanistPermissionState) {
       AccompanistPermissionStateWrapper(
         accompanist = accompanistPermissionState,
         context = context,
+        cancellationThreshold = cancellationThreshold,
       )
     }
 
@@ -68,6 +79,7 @@ public fun rememberPermissionState(
 internal class AccompanistPermissionStateWrapper(
   private val accompanist: AccompanistPermissionState,
   private val context: Context,
+  private val cancellationThreshold: Duration,
 ) : PermissionState {
   var isPreviousStatusNotRequested by mutableStateOf(true)
   var isPermissionPostRequest by mutableStateOf(false)
@@ -76,20 +88,28 @@ internal class AccompanistPermissionStateWrapper(
 
   override val permission: String = accompanist.permission
 
+  internal var requestedPermissionMark: ComparableTimeMark? = null
+
   private fun getPermissionStatus() = when {
     isPermissionPostRequest -> when(val accompanistStatus = accompanist.status) {
       is AccompanistPermissionStatus.Denied -> when {
         accompanistStatus.shouldShowRationale -> PermissionStatus.NotGranted.Denied
         else -> when {
-          // we can't go from NotRequested->PermanentlyDenied since there's
-          // no way to determine if the permission was already PermanentlyDenied
-          // or if the permission request was canceled.
-          // isPreviousStatusNotRequested forces an extra step by inserting a
-          // Denied status even though it should be PermanentlyDenied
-          // since this will allow us to handle the case where the permission
-          // request was canceled
+          // First request always goes to Denied to handle cancellation vs permanent denial ambiguity
           isPreviousStatusNotRequested -> PermissionStatus.NotGranted.Denied
-          else -> PermissionStatus.NotGranted.PermanentlyDenied
+
+          // Subsequent requests use timing heuristic to distinguish cancellation from permanent denial
+          else -> {
+            val elapsed = requestedPermissionMark?.let { TimeSource.Monotonic.markNow() - it }
+            if(elapsed != null && elapsed < cancellationThreshold) {
+              // Fast response suggests system didn't show dialog (true permanent denial)
+              PermissionStatus.NotGranted.PermanentlyDenied
+            }
+            else {
+              // Slow response suggests user saw and dismissed dialog (cancellation or soft denial)
+              PermissionStatus.NotGranted.Denied
+            }
+          }
         }
       }
 
@@ -110,6 +130,7 @@ internal class AccompanistPermissionStateWrapper(
   }
 
   override fun launchPermissionRequest() {
+    requestedPermissionMark = TimeSource.Monotonic.markNow()
     accompanist.launchPermissionRequest()
   }
 

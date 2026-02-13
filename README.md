@@ -61,16 +61,42 @@ This makes it **impossible to distinguish** between:
 1. A genuine permanent denial
 2. A canceled request
 
-If the status were to immediately jump to `PermanentlyDenied`, the user would be incorrectly blocked from requesting
-again. Compose PermissionX solves this by enforcing a **strict state transition**:
+Compose PermissionX solves this with a hybrid approach:
 
-```
-NotRequested → Denied → PermanentlyDenied
-```
+#### First Request: Always Denied
 
 The first request will always transition to `Denied`, even if the underlying system status indicates permanent denial.
-This gives the consumer a chance to show rationale and request again. Only on a **second consecutive denial** without
-rationale will the status become `PermanentlyDenied`.
+This gives the consumer a chance to show rationale and request again:
+
+```
+NotRequested → Denied
+```
+
+#### Subsequent Requests: Timing Heuristic
+
+After the first request, Compose PermissionX uses a **timing threshold** to distinguish between cancellations and
+permanent denials:
+
+- If the result comes back **faster than 135ms** (configurable via `cancellationThreshold`), the system likely
+didn't show a dialog (true permanent denial) → `PermanentlyDenied`
+- If the result takes **longer than 135ms**, the user likely saw and dismissed the dialog (cancellation) → `Denied`
+
+```
+Denied → (fast result) → PermanentlyDenied
+Denied → (slow result) → Denied (can request again)
+```
+
+This threshold is configurable:
+
+```kotlin
+val permissionState = rememberPermissionState(
+  permission = android.Manifest.permission.CAMERA,
+  cancellationThreshold = 200.milliseconds, // custom threshold
+)
+```
+
+The default of 135ms was chosen because it's slightly longer than typical system response times for pre-denied
+permissions, while being short enough that user interactions (even quick taps) will exceed it.
 
 ### Usage
 
