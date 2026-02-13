@@ -2,6 +2,18 @@
 
 [![Download](https://img.shields.io/maven-central/v/com.eygraber.permissionx/compose-permissionx/0.0.1)](https://search.maven.org/artifact/com.eygraber.permissionx/compose-permissionx)
 
+### Gradle
+
+```kotlin
+repositories {
+  mavenCentral()
+}
+
+implementation("com.eygraber.permissionx:compose-permissionx:0.0.6")
+```
+
+Snapshots can be found [here](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-via-gradle).
+
 ### Motivation
 
 Have you ever struggled with providing a good UX to your users when it comes time to ask them for permissions?
@@ -165,19 +177,6 @@ private fun MultiplePermissionsState.getTextForDeniedPermissions() = buildString
 
 ### KMP
 
-Currently this library just supports Android. If there is ever a need to solve a platform specific issue on other
+Currently, this library just supports Android. If there is ever a need to solve a platform specific issue on other
 platforms it can get added here. It is not a goal of Compose PermissionX to be a general use case multiplatform
 permission solution.
-
-### Gradle
-
-Kotlin
-```
-repositories {
-  mavenCentral()
-}
-
-implementation("com.eygraber.permissionx:compose-permissionx:0.0.6")
-```
-
-Snapshots can be found [here](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-via-gradle).
