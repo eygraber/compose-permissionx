@@ -21,14 +21,20 @@ import com.google.accompanist.permissions.rememberPermissionState as accompanist
  * @param permission the permission to control and observe.
  * @param onPermissionResult will be called with whether or not the user granted the permission
  *  after [PermissionState.launchPermissionRequest] is called.
+ * @param previewPermissionStatus provides a [PermissionStatus] when running in a preview.
  */
 @ExperimentalPermissionsApi
 @Composable
 public fun rememberPermissionState(
   permission: String,
   onPermissionResult: (Boolean) -> Unit = {},
+  previewPermissionStatus: PermissionStatus = PermissionStatus.Granted,
 ): PermissionState = when {
-  LocalInspectionMode.current -> PreviewPermissionState(permission)
+  LocalInspectionMode.current -> PreviewPermissionState(
+    permission = permission,
+    status = previewPermissionStatus
+  )
+
   else -> {
     var isPermissionPostRequest by remember { mutableStateOf(false) }
     val accompanistPermissionState =

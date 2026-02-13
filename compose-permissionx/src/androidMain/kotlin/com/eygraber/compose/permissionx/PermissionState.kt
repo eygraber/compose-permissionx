@@ -25,7 +25,7 @@ public interface PermissionState {
   /**
    * Request the [permission] to the user.
    *
-   * This should always be triggered from non-composable scope, for example, from a side-effect
+   * This should always be triggered from non-composable scope, for example, from a side effect
    * or a non-composable callback. Otherwise, this will result in an IllegalStateException.
    *
    * This triggers a system dialog that asks the user to grant or revoke the permission.
@@ -39,9 +39,9 @@ public interface PermissionState {
    * Open the app settings page.
    *
    * If the [permission] is [android.Manifest.permission.POST_NOTIFICATIONS] then
-   * the notification settings will be opened. Otherwise the app's settings will be opened.
+   * the notification settings will be opened. Otherwise, the app's settings will be opened.
    *
-   * This should always be triggered from non-composable scope, for example, from a side-effect
+   * This should always be triggered from non-composable scope, for example, from a side effect
    * or a non-composable callback. Otherwise, this will result in an IllegalStateException.
    */
   public fun openAppSettings()
@@ -51,7 +51,7 @@ public interface PermissionState {
  * Calls [PermissionState.launchPermissionRequest] or [PermissionState.openAppSettings]
  * depending on the state of [PermissionState.status].
  *
- * This should always be triggered from non-composable scope, for example, from a side-effect
+ * This should always be triggered from non-composable scope, for example, from a side effect
  * or a non-composable callback. Otherwise, this will result in an IllegalStateException.
  */
 @ExperimentalPermissionsApi

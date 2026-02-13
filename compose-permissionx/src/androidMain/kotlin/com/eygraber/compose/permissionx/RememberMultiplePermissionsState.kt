@@ -19,17 +19,21 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState as ac
  *
  * @param permission a permission to control and observe.
  * @param otherPermissions additional permissions to control and observe.
- * @param onPermissionsResult will be called with whether or not the user granted the permissions
+ * @param onPermissionsResult will be called with whether the user granted the permissions
  *  after [MultiplePermissionsState.launchMultiplePermissionRequest] is called.
+ *  @param previewPermissionStatuses provides a [PermissionStatus] for a given permission when running
+ *  in a preview.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 public fun rememberMultiplePermissionsState(
   permission: String,
   vararg otherPermissions: String,
-  onPermissionsResult: (Map<String, Boolean>) -> Unit = {}
+  previewPermissionStatuses: Map<String, PermissionStatus> = emptyMap(),
+  onPermissionsResult: (Map<String, Boolean>) -> Unit = {},
 ): MultiplePermissionsState = rememberMultiplePermissionsState(
   permissions = listOf(permission) + otherPermissions.toList(),
+  previewPermissionStatuses = previewPermissionStatuses,
   onPermissionsResult = onPermissionsResult,
 )
 
@@ -37,16 +41,23 @@ public fun rememberMultiplePermissionsState(
  * Creates a [MultiplePermissionsState] that is remembered across compositions.
  *
  * @param permissions the permissions to control and observe.
- * @param onPermissionsResult will be called with whether or not the user granted the permissions
+ * @param onPermissionsResult will be called with whether the user granted the permissions
  *  after [MultiplePermissionsState.launchMultiplePermissionRequest] is called.
+ *  @param previewPermissionStatuses provides a [PermissionStatus] for a given permission when running
+ *  in a preview.
  */
 @ExperimentalPermissionsApi
 @Composable
 public fun rememberMultiplePermissionsState(
   permissions: List<String>,
+  previewPermissionStatuses: Map<String, PermissionStatus> = emptyMap(),
   onPermissionsResult: (Map<String, Boolean>) -> Unit = {},
 ): MultiplePermissionsState = when {
-  LocalInspectionMode.current -> PreviewMultiplePermissionsState(permissions)
+  LocalInspectionMode.current -> PreviewMultiplePermissionsState(
+    permissions = permissions,
+    permissionStatuses = previewPermissionStatuses,
+  )
+
   else -> {
     var isPermissionPostRequest by remember { mutableStateOf(false) }
     val accompanistPermissionState =
@@ -85,9 +96,16 @@ public fun rememberMultiplePermissionsState(
 @OptIn(ExperimentalPermissionsApi::class)
 @Immutable
 private class PreviewMultiplePermissionsState(
-  permissions: List<String>
+  permissions: List<String>,
+  permissionStatuses: Map<String, PermissionStatus>
 ) : MultiplePermissionsState {
-  override val permissions: List<PermissionState> = permissions.fastMap(::PreviewPermissionState)
+  override val permissions: List<PermissionState> = permissions.fastMap { permission ->
+    PreviewPermissionState(
+      permission = permission,
+      status = permissionStatuses[permission] ?: PermissionStatus.Granted,
+    )
+  }
+
   override val isNotRequested: Boolean = true
   override val isAllPermissionsGranted: Boolean = false
   override val isAllNotGrantedPermissionsPermanentlyDenied: Boolean = false
