@@ -49,6 +49,55 @@ change<sup>[1](https://github.com/google/accompanist/issues/1066)</sup>
 <sup>[2](https://github.com/google/accompanist/issues/1300)</sup>
 <sup>[3](https://github.com/google/accompanist/pull/990)</sup>, and that's why Compose PermissionX is here.
 
+### Handling Canceled Permission Requests
+
+One particularly tricky scenario occurs when a permission request is canceled. This can happen when:
+- The user taps outside the permission dialog
+- The system quickly denies the request for some reason
+- The permission was previously permanently denied in a prior app session
+
+In these cases, Android returns a denied result without showing the rationale flag (`shouldShowRationale = false`).
+This makes it **impossible to distinguish** between:
+1. A genuine permanent denial
+2. A canceled request
+
+Compose PermissionX solves this with a hybrid approach:
+
+#### First Request: Always Denied
+
+The first request will always transition to `Denied`, even if the underlying system status indicates permanent denial.
+This gives the consumer a chance to show rationale and request again:
+
+```
+NotRequested → Denied
+```
+
+#### Subsequent Requests: Timing Heuristic
+
+After the first request, Compose PermissionX uses a **timing threshold** to distinguish between cancellations and
+permanent denials:
+
+- If the result comes back **faster than 135ms** (configurable via `cancellationThreshold`), the system likely
+didn't show a dialog (true permanent denial) → `PermanentlyDenied`
+- If the result takes **longer than 135ms**, the user likely saw and dismissed the dialog (cancellation) → `Denied`
+
+```
+Denied → (fast result) → PermanentlyDenied
+Denied → (slow result) → Denied (can request again)
+```
+
+This threshold is configurable:
+
+```kotlin
+val permissionState = rememberPermissionState(
+  permission = android.Manifest.permission.CAMERA,
+  cancellationThreshold = 200.milliseconds, // custom threshold
+)
+```
+
+The default of 135ms was chosen because it's slightly longer than typical system response times for pre-denied
+permissions, while being short enough that user interactions (even quick taps) will exceed it.
+
 ### Usage
 
 Most of the API mirrors Accompanist Permissions.
