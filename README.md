@@ -49,6 +49,29 @@ change<sup>[1](https://github.com/google/accompanist/issues/1066)</sup>
 <sup>[2](https://github.com/google/accompanist/issues/1300)</sup>
 <sup>[3](https://github.com/google/accompanist/pull/990)</sup>, and that's why Compose PermissionX is here.
 
+### Handling Canceled Permission Requests
+
+One particularly tricky scenario occurs when a permission request is canceled. This can happen when:
+- The user taps outside the permission dialog
+- The system quickly denies the request for some reason
+- The permission was previously permanently denied in a prior app session
+
+In these cases, Android returns a denied result without showing the rationale flag (`shouldShowRationale = false`).
+This makes it **impossible to distinguish** between:
+1. A genuine permanent denial
+2. A canceled request
+
+If the status were to immediately jump to `PermanentlyDenied`, the user would be incorrectly blocked from requesting
+again. Compose PermissionX solves this by enforcing a **strict state transition**:
+
+```
+NotRequested → Denied → PermanentlyDenied
+```
+
+The first request will always transition to `Denied`, even if the underlying system status indicates permanent denial.
+This gives the consumer a chance to show rationale and request again. Only on a **second consecutive denial** without
+rationale will the status become `PermanentlyDenied`.
+
 ### Usage
 
 Most of the API mirrors Accompanist Permissions.
