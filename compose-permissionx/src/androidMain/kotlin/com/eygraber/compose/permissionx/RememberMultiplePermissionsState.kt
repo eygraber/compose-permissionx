@@ -26,23 +26,23 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState as ac
  *
  * @param permission a permission to control and observe.
  * @param otherPermissions additional permissions to control and observe.
- * @param onPermissionsResult will be called with whether the user granted the permissions
- *  after [MultiplePermissionsState.launchMultiplePermissionRequest] is called.
  * @param cancellationThreshold if a permission request is made, and a denied result is received without a
  *  rationale within this duration after the first request, it is likely a cancellation and the status
  *  will remain [PermissionStatus.NotGranted.Denied]. After the first request, if the result comes back
  *  faster than this threshold, the status will be [PermissionStatus.NotGranted.PermanentlyDenied].
  * @param previewPermissionStatuses provides a [PermissionStatus] for a given permission when running
  *  in a preview.
+ * @param onPermissionsResult will be called with whether the user granted the permissions
+ *  after [MultiplePermissionsState.launchMultiplePermissionRequest] is called.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 public fun rememberMultiplePermissionsState(
   permission: String,
   vararg otherPermissions: String,
-  onPermissionsResult: (Map<String, Boolean>) -> Unit = {},
   cancellationThreshold: Duration = 135.milliseconds,
   previewPermissionStatuses: Map<String, PermissionStatus> = emptyMap(),
+  onPermissionsResult: (Map<String, Boolean>) -> Unit = {},
 ): MultiplePermissionsState = rememberMultiplePermissionsState(
   permissions = listOf(permission) + otherPermissions.toList(),
   onPermissionsResult = onPermissionsResult,
@@ -54,22 +54,22 @@ public fun rememberMultiplePermissionsState(
  * Creates a [MultiplePermissionsState] that is remembered across compositions.
  *
  * @param permissions the permissions to control and observe.
- * @param onPermissionsResult will be called with whether the user granted the permissions
- *  after [MultiplePermissionsState.launchMultiplePermissionRequest] is called.
  * @param cancellationThreshold if a permission request is made, and a denied result is received without a
  *  rationale within this duration after the first request, it is likely a cancellation and the status
  *  will remain [PermissionStatus.NotGranted.Denied]. After the first request, if the result comes back
  *  faster than this threshold, the status will be [PermissionStatus.NotGranted.PermanentlyDenied].
  * @param previewPermissionStatuses provides a [PermissionStatus] for a given permission when running
  *  in a preview.
+ * @param onPermissionsResult will be called with whether the user granted the permissions
+ *  after [MultiplePermissionsState.launchMultiplePermissionRequest] is called.
  */
 @ExperimentalPermissionsApi
 @Composable
 public fun rememberMultiplePermissionsState(
   permissions: List<String>,
-  onPermissionsResult: (Map<String, Boolean>) -> Unit = {},
   cancellationThreshold: Duration = 135.milliseconds,
   previewPermissionStatuses: Map<String, PermissionStatus> = emptyMap(),
+  onPermissionsResult: (Map<String, Boolean>) -> Unit = {},
 ): MultiplePermissionsState = when {
   LocalInspectionMode.current -> PreviewMultiplePermissionsState(
     permissions = permissions,
