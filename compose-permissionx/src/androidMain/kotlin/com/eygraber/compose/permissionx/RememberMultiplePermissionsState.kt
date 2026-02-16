@@ -141,7 +141,7 @@ private class AccompanistMultiplePermissionsStateWrapper(
 
   override val isAllPermissionsGranted: Boolean get() = accompanist.allPermissionsGranted
   override val isAllNotGrantedPermissionsPermanentlyDenied: Boolean
-    get() = permissions.fastAll { it.status.isGranted || it.status.isPermanentlyDenied }
+    get() = permissions.fastAll { it.status.isGranted() || it.status.isPermanentlyDenied() }
 
   private var requestedPermissionMark: ComparableTimeMark? = null
 
