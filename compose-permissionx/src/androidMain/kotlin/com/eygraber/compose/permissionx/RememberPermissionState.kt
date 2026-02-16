@@ -24,21 +24,21 @@ import com.google.accompanist.permissions.rememberPermissionState as accompanist
  * Creates a [PermissionState] that is remembered across compositions.
  *
  * @param permission the permission to control and observe.
- * @param onPermissionResult will be called with whether the user granted the permission
- *  after [PermissionState.launchPermissionRequest] is called.
  * @param cancellationThreshold if a permission request is made, and a denied result is received without a
  *  rationale within this duration after the first request, it is likely a cancellation and the status
  *  will remain [PermissionStatus.NotGranted.Denied]. After the first request, if the result comes back
  *  faster than this threshold, the status will be [PermissionStatus.NotGranted.PermanentlyDenied].
  * @param previewPermissionStatus provides a [PermissionStatus] when running in a preview.
+ * @param onPermissionResult will be called with whether the user granted the permission
+ *  after [PermissionState.launchPermissionRequest] is called.
  */
 @ExperimentalPermissionsApi
 @Composable
 public fun rememberPermissionState(
   permission: String,
-  onPermissionResult: (Boolean) -> Unit = {},
   cancellationThreshold: Duration = 135.milliseconds,
   previewPermissionStatus: PermissionStatus = PermissionStatus.Granted,
+  onPermissionResult: (Boolean) -> Unit = {},
 ): PermissionState = when {
   LocalInspectionMode.current -> PreviewPermissionState(
     permission = permission,
