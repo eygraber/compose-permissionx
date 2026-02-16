@@ -78,28 +78,28 @@ public fun MultiplePermissionsState.launchMultiplePermissionRequestOrAppSettings
  */
 @ExperimentalPermissionsApi
 public inline val MultiplePermissionsState.grantedPermissions: List<PermissionState>
-  get() = permissions.filter { it.status.isGranted }
+  get() = permissions.filter { it.status.isGranted() }
 
 /**
  * List of permissions not granted by the user.
  */
 @ExperimentalPermissionsApi
 public inline val MultiplePermissionsState.notGrantedPermissions: List<PermissionState>
-  get() = permissions.filter { it.status.isNotGranted }
+  get() = permissions.filter { it.status.isNotGranted() }
 
 /**
  * List of permissions denied by the user.
  */
 @ExperimentalPermissionsApi
 public inline val MultiplePermissionsState.deniedPermissions: List<PermissionState>
-  get() = permissions.filter { it.status.isDenied }
+  get() = permissions.filter { it.status.isDenied() }
 
 /**
  * List of permissions permanently denied by the user.
  */
 @ExperimentalPermissionsApi
 public inline val MultiplePermissionsState.permanentlyDeniedPermissions: List<PermissionState>
-  get() = permissions.filter { it.status.isPermanentlyDenied }
+  get() = permissions.filter { it.status.isPermanentlyDenied() }
 
 /**
  * Returns `true` if [permission] was granted, otherwise `false`.
@@ -110,7 +110,7 @@ public inline val MultiplePermissionsState.permanentlyDeniedPermissions: List<Pe
 public fun MultiplePermissionsState.isGranted(permission: String): Boolean =
   requireNotNull(permissions.find { it.permission == permission }) {
     "$permission is not present in the list of requested permissions"
-  }.status.isGranted
+  }.status.isGranted()
 
 /**
  * Returns `true` if [permission] was not granted, otherwise `false`.
@@ -121,7 +121,7 @@ public fun MultiplePermissionsState.isGranted(permission: String): Boolean =
 public fun MultiplePermissionsState.isNotGranted(permission: String): Boolean =
   requireNotNull(permissions.find { it.permission == permission }) {
     "$permission is not present in the list of requested permissions"
-  }.status.isNotGranted
+  }.status.isNotGranted()
 
 /**
  * Returns `true` if [permission] was denied, otherwise `false`.
@@ -132,7 +132,7 @@ public fun MultiplePermissionsState.isNotGranted(permission: String): Boolean =
 public fun MultiplePermissionsState.isDenied(permission: String): Boolean =
   requireNotNull(permissions.find { it.permission == permission }) {
     "$permission is not present in the list of requested permissions"
-  }.status.isDenied
+  }.status.isDenied()
 
 /**
  * Returns `true` if [permission] was permanently denied, otherwise `false`.
@@ -143,4 +143,4 @@ public fun MultiplePermissionsState.isDenied(permission: String): Boolean =
 public fun MultiplePermissionsState.isPermanentlyDenied(permission: String): Boolean =
   requireNotNull(permissions.find { it.permission == permission }) {
     "$permission is not present in the list of requested permissions"
-  }.status.isPermanentlyDenied
+  }.status.isPermanentlyDenied()
