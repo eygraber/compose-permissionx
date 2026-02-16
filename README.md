@@ -9,7 +9,7 @@ repositories {
   mavenCentral()
 }
 
-implementation("com.eygraber.permissionx:compose-permissionx:0.1.0")
+implementation("com.eygraber.permissionx:compose-permissionx:0.2.0")
 ```
 
 Snapshots can be found [here](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-via-gradle).
